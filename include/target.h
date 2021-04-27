@@ -51,8 +51,6 @@ void add_target_dependencies(BakeTargetList *target_list, BakeTarget *target, si
 
 void free_target(BakeTarget *target);
 
-size_t *sort_dependencies(BakeTarget *target);
-
 void add_target_action(BakeTarget *target, const char *action);
 
 bool target_requires_rebuilding(BakeTarget *target);

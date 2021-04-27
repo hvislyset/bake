@@ -90,8 +90,3 @@ bool execute_target_action(BakeContext *context, char *action, char *shell)
 
     return true;
 }
-
-void test(BakeContext *context)
-{
-    printf("%s\n", context->config->directory);
-}
