@@ -13,6 +13,4 @@ void execute_target_actions(BakeContext *context, size_t actions_count, char **a
 
 bool execute_target_action(BakeContext *context, char *action, char *shell);
 
-void test(BakeContext *context);
-
 #endif // ACTION_H
