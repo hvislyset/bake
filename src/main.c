@@ -43,6 +43,7 @@ int main(int argc, char **argv)
 
         case 'i':
             context->config->ignore_target_errors = true;
+
             break;
 
         case 'n':
