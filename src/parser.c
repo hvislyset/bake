@@ -171,16 +171,28 @@ void parse_line(BakeParser *parser, BakeContext *context, const char *line)
             strncpy(dependencies, line_d + identifier + 2, strlen(line_d) - identifier);
 
             char *target_name_d = strdup(target_name);
-            target_list_add(context->targets, trim(target_name_d));
+            BakeTarget *new_target = target_list_add(context->targets, trim(target_name_d));
+
+            if (!new_target)
+            {
+                new_target = find_target(context->targets, target_name_d);
+
+                if (!new_target)
+                {
+                    fprintf(stderr, "Unable to add or find existing target\n");
+
+                    exit(EXIT_FAILURE);
+                }
+            }
 
             size_t dependencies_count;
             char *dependencies_d = strdup(dependencies);
             char **dependencies_list = string_split(trim(dependencies_d), " ", &dependencies_count);
 
-            add_target_dependencies(context->targets, find_target(context->targets, target_name), dependencies_count, dependencies_list);
+            add_target_dependencies(context->targets, new_target, dependencies_count, dependencies_list);
 
             parser->is_target_action = true;
-            parser->current_target = find_target(context->targets, target_name);
+            parser->current_target = new_target;
 
             free(target_name);
             free(target_name_d);

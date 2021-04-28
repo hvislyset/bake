@@ -39,7 +39,7 @@ BakeTargetList *new_target_list();
 
 void free_target_list(BakeTargetList *target_list);
 
-void target_list_add(BakeTargetList *target_list, const char *name);
+BakeTarget *target_list_add(BakeTargetList *target_list, const char *name);
 
 BakeTarget *new_target(const char *name);
 

@@ -34,3 +34,6 @@ util.o: src/util.c
 
 variable.o: src/variable.c
 	$(CC) $(CFLAGS) -c src/variable.c
+
+clean:
+	rm -rf *.o

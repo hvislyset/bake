@@ -32,7 +32,7 @@ BakeTargetList *new_target_list()
     return target_list;
 }
 
-void target_list_add(BakeTargetList *target_list, const char *name)
+BakeTarget *target_list_add(BakeTargetList *target_list, const char *name)
 {
     BakeTarget *target = find_target(target_list, name);
 
@@ -47,7 +47,11 @@ void target_list_add(BakeTargetList *target_list, const char *name)
 
         target->key = target_list->count;
         target_list->targets[target_list->count++] = target;
+
+        return target;
     }
+
+    return NULL;
 }
 
 void free_target_list(BakeTargetList *target_list)
@@ -139,9 +143,9 @@ void add_target_dependencies(BakeTargetList *target_list, BakeTarget *target, si
 
         if (!existing_target)
         {
-            target_list_add(target_list, dependencies[i]);
+            BakeTarget *new_target = target_list_add(target_list, dependencies[i]);
 
-            target->dependencies[target->dependencies_count++] = find_target(target_list, dependencies[i]); // TODO: WE JUST CREATED IT, SO SURELY WE SHOULDN'T HAVE TO SCAN THE WHOLE LIST
+            target->dependencies[target->dependencies_count++] = new_target;
         }
         else
         {
