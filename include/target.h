@@ -41,6 +41,8 @@ void free_target_list(BakeTargetList *target_list);
 
 BakeTarget *target_list_add(BakeTargetList *target_list, const char *name);
 
+void resize_target_list(BakeTargetList *target_list);
+
 BakeTarget *new_target(const char *name);
 
 BakeTarget *find_target(BakeTargetList *target_list, const char *name);
@@ -49,9 +51,13 @@ BakeTarget *find_default_target(BakeTargetList *target_list);
 
 void add_target_dependencies(BakeTargetList *target_list, BakeTarget *target, size_t dependencies_count, char **dependencies);
 
+void resize_target_dependencies(BakeTarget *target);
+
 void free_target(BakeTarget *target);
 
 void add_target_action(BakeTarget *target, const char *action);
+
+void resize_target_actions(BakeTarget *target);
 
 bool target_requires_rebuilding(BakeTarget *target);
 

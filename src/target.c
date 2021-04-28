@@ -38,6 +38,11 @@ BakeTarget *target_list_add(BakeTargetList *target_list, const char *name)
 
     if (!target)
     {
+        if (target_list->count == target_list->size)
+        {
+            resize_target_list(target_list);
+        }
+
         target = new_target(name);
 
         if (target_list->count == 0)
@@ -52,6 +57,26 @@ BakeTarget *target_list_add(BakeTargetList *target_list, const char *name)
     }
 
     return NULL;
+}
+
+void resize_target_list(BakeTargetList *target_list)
+{
+    size_t prev_size = target_list->size;
+    target_list->size *= 2;
+
+    BakeTarget **temp = realloc(target_list->targets, target_list->size * sizeof(BakeTarget));
+
+    if (!temp)
+    {
+        fprintf(stderr, "No memory\n");
+    }
+
+    for (size_t i = prev_size; i < target_list->size; i++)
+    {
+        temp[i] = calloc(9, sizeof(BakeTarget));
+    }
+
+    target_list->targets = temp;
 }
 
 void free_target_list(BakeTargetList *target_list)
@@ -139,6 +164,11 @@ void add_target_dependencies(BakeTargetList *target_list, BakeTarget *target, si
 {
     for (size_t i = 0; i < dependencies_count; i++)
     {
+        if (target->dependencies_count == target->actions_size)
+        {
+            resize_target_dependencies(target);
+        }
+
         BakeTarget *existing_target = find_target(target_list, dependencies[i]);
 
         if (!existing_target)
@@ -152,6 +182,26 @@ void add_target_dependencies(BakeTargetList *target_list, BakeTarget *target, si
             target->dependencies[target->dependencies_count++] = existing_target;
         }
     }
+}
+
+void resize_target_dependencies(BakeTarget *target)
+{
+    size_t prev_size = target->dependencies_size;
+    target->dependencies_size *= 2;
+
+    BakeTarget **temp = realloc(target->dependencies, target->dependencies_size * sizeof(BakeTarget));
+
+    if (!temp)
+    {
+        fprintf(stderr, "No memory\n");
+    }
+
+    for (size_t i = prev_size; i < target->dependencies_size; i++)
+    {
+        temp[i] = calloc(9, sizeof(BakeTarget));
+    }
+
+    target->dependencies = temp;
 }
 
 void free_target(BakeTarget *target)
@@ -170,7 +220,32 @@ void free_target(BakeTarget *target)
 
 void add_target_action(BakeTarget *target, const char *action)
 {
+    if (target->actions_count == target->actions_size)
+    {
+        resize_target_actions(target);
+    }
+
     target->actions[target->actions_count++] = strdup(action);
+}
+
+void resize_target_actions(BakeTarget *target)
+{
+    size_t prev_size = target->actions_size;
+    target->actions_size *= 2;
+
+    char **temp = realloc(target->actions, target->actions_size * sizeof(char *));
+
+    if (!temp)
+    {
+        fprintf(stderr, "No memory\n");
+    }
+
+    for (size_t i = prev_size; i < target->actions_size; i++)
+    {
+        temp[i] = calloc(BUFSIZ, sizeof(char));
+    }
+
+    target->actions = temp;
 }
 
 bool target_requires_rebuilding(BakeTarget *target)
