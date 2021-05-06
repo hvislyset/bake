@@ -37,3 +37,4 @@ variable.o: src/variable.c
 
 clean:
 	rm -rf *.o
+	

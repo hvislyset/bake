@@ -10,3 +10,4 @@ all:
 
 clean:
 	rm -rf $(PROJECT) *.o
+	
