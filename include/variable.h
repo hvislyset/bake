@@ -2,6 +2,7 @@
 #define VARIABLE_H
 
 #include <stdlib.h>
+#include <stdbool.h>
 
 #define VARIABLE_TABLE_INITIAL_SIZE 100000
 
@@ -34,5 +35,7 @@ char *variable_get(BakeVariableTable *variable_table, const char *name);
 void variable_set(BakeVariableTable *variable_table, const char *name, const char *value);
 
 char *expand_variables(BakeVariableTable *variable_table, const char *string);
+
+bool is_reserved_identifier(const char *name);
 
 #endif // VARIABLE_H

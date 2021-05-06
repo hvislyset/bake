@@ -2,7 +2,6 @@
 #include <string.h>
 #include <unistd.h>
 #include <limits.h>
-#include <time.h>
 
 #include "../include/variable.h"
 
@@ -215,6 +214,58 @@ char *expand_variables(BakeVariableTable *variable_table, const char *string)
 
             char *variable_value = variable_get(variable_table, variable_name);
 
+            if (strcmp(variable_value, "") == 0)
+            {
+                variable_value = getenv(variable_name);
+
+                if (!variable_value)
+                {
+                    if (is_reserved_identifier(variable_name))
+                    {
+                        if (strcmp(variable_name, "PID") == 0)
+                        {
+                            pid_t pid = getpid();
+                            char buf[11];
+
+                            sprintf(buf, "%d", pid);
+
+                            variable_value = buf;
+                        }
+
+                        if (strcmp(variable_name, "PPID") == 0)
+                        {
+                            pid_t ppid = getppid();
+                            char buf[11];
+
+                            sprintf(buf, "%d", ppid);
+
+                            variable_value = buf;
+                        }
+
+                        if (strcmp(variable_name, "PWD") == 0)
+                        {
+                            char cwd[PATH_MAX];
+
+                            if (getcwd(cwd, sizeof(cwd)))
+                            {
+                                sprintf(cwd, "%s", cwd);
+
+                                variable_value = cwd;
+                            }
+                        }
+
+                        if (strcmp(variable_name, "RAND") == 0)
+                        {
+                            char buf[11];
+
+                            sprintf(buf, "%d", rand());
+
+                            variable_value = buf;
+                        }
+                    }
+                }
+            }
+
             size_t new_size = strlen(result) + strlen(variable_value) + 1;
             result = realloc(result, new_size);
 
@@ -264,4 +315,12 @@ char *expand_variables(BakeVariableTable *variable_table, const char *string)
     }
 
     return result;
+}
+
+bool is_reserved_identifier(const char *name)
+{
+    return strcmp(name, "PID") == 0 ||
+           strcmp(name, "PPID") == 0 ||
+           strcmp(name, "PWD") == 0 ||
+           strcmp(name, "RAND") == 0;
 }

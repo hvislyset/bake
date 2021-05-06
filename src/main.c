@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
+#include <time.h>
 
 #include "../include/bake.h"
 #include "../include/parser.h"
@@ -77,6 +78,8 @@ int main(int argc, char **argv)
     {
         strncpy(target, argv[optind], strlen(argv[optind]));
     }
+
+    srand(time(NULL));
 
     BakeParser *parser = new_parser();
 
