@@ -218,51 +218,52 @@ char *expand_variables(BakeVariableTable *variable_table, const char *string)
             {
                 variable_value = getenv(variable_name);
 
-                if (!variable_value)
+                if (!variable_value && is_reserved_identifier(variable_name))
                 {
-                    if (is_reserved_identifier(variable_name))
+                    if (strcmp(variable_name, "PID") == 0)
                     {
-                        if (strcmp(variable_name, "PID") == 0)
+                        pid_t pid = getpid();
+                        char buf[11];
+
+                        sprintf(buf, "%d", pid);
+
+                        variable_value = buf;
+                    }
+
+                    if (strcmp(variable_name, "PPID") == 0)
+                    {
+                        pid_t ppid = getppid();
+                        char buf[11];
+
+                        sprintf(buf, "%d", ppid);
+
+                        variable_value = buf;
+                    }
+
+                    if (strcmp(variable_name, "PWD") == 0)
+                    {
+                        char cwd[PATH_MAX];
+
+                        if (getcwd(cwd, sizeof(cwd)))
                         {
-                            pid_t pid = getpid();
-                            char buf[11];
+                            sprintf(cwd, "%s", cwd);
 
-                            sprintf(buf, "%d", pid);
-
-                            variable_value = buf;
-                        }
-
-                        if (strcmp(variable_name, "PPID") == 0)
-                        {
-                            pid_t ppid = getppid();
-                            char buf[11];
-
-                            sprintf(buf, "%d", ppid);
-
-                            variable_value = buf;
-                        }
-
-                        if (strcmp(variable_name, "PWD") == 0)
-                        {
-                            char cwd[PATH_MAX];
-
-                            if (getcwd(cwd, sizeof(cwd)))
-                            {
-                                sprintf(cwd, "%s", cwd);
-
-                                variable_value = cwd;
-                            }
-                        }
-
-                        if (strcmp(variable_name, "RAND") == 0)
-                        {
-                            char buf[11];
-
-                            sprintf(buf, "%d", rand());
-
-                            variable_value = buf;
+                            variable_value = cwd;
                         }
                     }
+
+                    if (strcmp(variable_name, "RAND") == 0)
+                    {
+                        char buf[11];
+
+                        sprintf(buf, "%d", rand());
+
+                        variable_value = buf;
+                    }
+                }
+                else
+                {
+                    variable_value = "";
                 }
             }
 
